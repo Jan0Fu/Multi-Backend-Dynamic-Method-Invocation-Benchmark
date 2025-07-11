@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Dynamic Methods Benchmark</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      margin: 2rem;
+    }
+    textarea {
+      width: 100%;
+      height: 150px;
+    }
+    table {
+      margin-top: 1rem;
+      width: 100%;
+      border-collapse: collapse;
+    }
+    th, td {
+      padding: 8px 12px;
+      border: 1px solid #ccc;
+    }
+    th {
+      background-color: #eee;
+    }
+  </style>
+</head>
+<body>
+  <h1>Script Benchmark Across Backends</h1>
+
+  <label for="script">Zadaj JS skript:</label>
+  <textarea id="script">// Príklad: function add(a, b) { return a + b; } add(2, 3);</textarea>
+  <br><br>
+  <button onclick="runBenchmark()">Spustiť benchmark</button>
+
+  <table id="results">
+    <thead>
+      <tr>
+        <th>Backend</th>
+        <th>Výsledok</th>
+        <th>Čas (ms)</th>
+        <th>Stav</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+
+  <script>
+    const endpoints = [
+      { name: "Java (GraalVM)", url: "http://localhost:8080/java/run-js" },
+      { name: ".NET (Jint)", url: "http://localhost:5181/api/js" },
+      { name: "Node.js (V8)", url: "http://localhost:3000/node/run-js" }
+    ];
+
+    async function runBenchmark() {
+      const script = document.getElementById('script').value;
+      const tbody = document.querySelector('#results tbody');
+      tbody.innerHTML = '';
+
+      for (const backend of endpoints) {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td>${backend.name}</td>
+          <td>...</td>
+          <td>...</td>
+          <td>Čaká sa</td>
+        `;
+        tbody.appendChild(row);
+
+        try {
+          const response = await fetch(backend.url, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ script })
+          });
+
+          const data = await response.json();
+          row.cells[1].innerText = data.result ?? '(žiadny)';
+          row.cells[2].innerText = data.durationMs ?? '?';
+          row.cells[3].innerText = response.ok ? 'OK' : 'Chyba';
+        } catch (err) {
+          row.cells[1].innerText = '-';
+          row.cells[2].innerText = '-';
+          row.cells[3].innerText = 'Zlyhalo';
+        }
+      }
+    }
+  </script>
+</body>
+</html>
