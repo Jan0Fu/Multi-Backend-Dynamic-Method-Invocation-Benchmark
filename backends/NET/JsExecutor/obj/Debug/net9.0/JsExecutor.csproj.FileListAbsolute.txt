@@ -1,0 +1,71 @@
+/Users/jano/PEVS/Bakalarka/Jint .NET API/JsExecutor/JsExecutor/bin/Debug/net9.0/appsettings.Development.json
+/Users/jano/PEVS/Bakalarka/Jint .NET API/JsExecutor/JsExecutor/bin/Debug/net9.0/appsettings.json
+/Users/jano/PEVS/Bakalarka/Jint .NET API/JsExecutor/JsExecutor/bin/Debug/net9.0/JsExecutor.staticwebassets.endpoints.json
+/Users/jano/PEVS/Bakalarka/Jint .NET API/JsExecutor/JsExecutor/bin/Debug/net9.0/JsExecutor
+/Users/jano/PEVS/Bakalarka/Jint .NET API/JsExecutor/JsExecutor/bin/Debug/net9.0/JsExecutor.deps.json
+/Users/jano/PEVS/Bakalarka/Jint .NET API/JsExecutor/JsExecutor/bin/Debug/net9.0/JsExecutor.runtimeconfig.json
+/Users/jano/PEVS/Bakalarka/Jint .NET API/JsExecutor/JsExecutor/bin/Debug/net9.0/JsExecutor.dll
+/Users/jano/PEVS/Bakalarka/Jint .NET API/JsExecutor/JsExecutor/bin/Debug/net9.0/JsExecutor.pdb
+/Users/jano/PEVS/Bakalarka/Jint .NET API/JsExecutor/JsExecutor/bin/Debug/net9.0/Acornima.dll
+/Users/jano/PEVS/Bakalarka/Jint .NET API/JsExecutor/JsExecutor/bin/Debug/net9.0/Jint.dll
+/Users/jano/PEVS/Bakalarka/Jint .NET API/JsExecutor/JsExecutor/bin/Debug/net9.0/Microsoft.AspNetCore.OpenApi.dll
+/Users/jano/PEVS/Bakalarka/Jint .NET API/JsExecutor/JsExecutor/bin/Debug/net9.0/Microsoft.OpenApi.dll
+/Users/jano/PEVS/Bakalarka/Jint .NET API/JsExecutor/JsExecutor/obj/Debug/net9.0/JsExecutor.csproj.AssemblyReference.cache
+/Users/jano/PEVS/Bakalarka/Jint .NET API/JsExecutor/JsExecutor/obj/Debug/net9.0/JsExecutor.GeneratedMSBuildEditorConfig.editorconfig
+/Users/jano/PEVS/Bakalarka/Jint .NET API/JsExecutor/JsExecutor/obj/Debug/net9.0/JsExecutor.AssemblyInfoInputs.cache
+/Users/jano/PEVS/Bakalarka/Jint .NET API/JsExecutor/JsExecutor/obj/Debug/net9.0/JsExecutor.AssemblyInfo.cs
+/Users/jano/PEVS/Bakalarka/Jint .NET API/JsExecutor/JsExecutor/obj/Debug/net9.0/JsExecutor.csproj.CoreCompileInputs.cache
+/Users/jano/PEVS/Bakalarka/Jint .NET API/JsExecutor/JsExecutor/obj/Debug/net9.0/JsExecutor.MvcApplicationPartsAssemblyInfo.cs
+/Users/jano/PEVS/Bakalarka/Jint .NET API/JsExecutor/JsExecutor/obj/Debug/net9.0/JsExecutor.MvcApplicationPartsAssemblyInfo.cache
+/Users/jano/PEVS/Bakalarka/Jint .NET API/JsExecutor/JsExecutor/obj/Debug/net9.0/scopedcss/bundle/JsExecutor.styles.css
+/Users/jano/PEVS/Bakalarka/Jint .NET API/JsExecutor/JsExecutor/obj/Debug/net9.0/staticwebassets.build.json
+/Users/jano/PEVS/Bakalarka/Jint .NET API/JsExecutor/JsExecutor/obj/Debug/net9.0/staticwebassets.development.json
+/Users/jano/PEVS/Bakalarka/Jint .NET API/JsExecutor/JsExecutor/obj/Debug/net9.0/staticwebassets.build.endpoints.json
+/Users/jano/PEVS/Bakalarka/Jint .NET API/JsExecutor/JsExecutor/obj/Debug/net9.0/staticwebassets/msbuild.JsExecutor.Microsoft.AspNetCore.StaticWebAssets.props
+/Users/jano/PEVS/Bakalarka/Jint .NET API/JsExecutor/JsExecutor/obj/Debug/net9.0/staticwebassets/msbuild.JsExecutor.Microsoft.AspNetCore.StaticWebAssetEndpoints.props
+/Users/jano/PEVS/Bakalarka/Jint .NET API/JsExecutor/JsExecutor/obj/Debug/net9.0/staticwebassets/msbuild.build.JsExecutor.props
+/Users/jano/PEVS/Bakalarka/Jint .NET API/JsExecutor/JsExecutor/obj/Debug/net9.0/staticwebassets/msbuild.buildMultiTargeting.JsExecutor.props
+/Users/jano/PEVS/Bakalarka/Jint .NET API/JsExecutor/JsExecutor/obj/Debug/net9.0/staticwebassets/msbuild.buildTransitive.JsExecutor.props
+/Users/jano/PEVS/Bakalarka/Jint .NET API/JsExecutor/JsExecutor/obj/Debug/net9.0/staticwebassets.pack.json
+/Users/jano/PEVS/Bakalarka/Jint .NET API/JsExecutor/JsExecutor/obj/Debug/net9.0/JsExecutor.csproj.Up2Date
+/Users/jano/PEVS/Bakalarka/Jint .NET API/JsExecutor/JsExecutor/obj/Debug/net9.0/JsExecutor.dll
+/Users/jano/PEVS/Bakalarka/Jint .NET API/JsExecutor/JsExecutor/obj/Debug/net9.0/refint/JsExecutor.dll
+/Users/jano/PEVS/Bakalarka/Jint .NET API/JsExecutor/JsExecutor/obj/Debug/net9.0/JsExecutor.pdb
+/Users/jano/PEVS/Bakalarka/Jint .NET API/JsExecutor/JsExecutor/obj/Debug/net9.0/JsExecutor.genruntimeconfig.cache
+/Users/jano/PEVS/Bakalarka/Jint .NET API/JsExecutor/JsExecutor/obj/Debug/net9.0/ref/JsExecutor.dll
+/Users/jano/PEVS/Bakalarka/Dynamic-Benchmark/backends/NET/JsExecutor/bin/Debug/net9.0/appsettings.Development.json
+/Users/jano/PEVS/Bakalarka/Dynamic-Benchmark/backends/NET/JsExecutor/bin/Debug/net9.0/appsettings.json
+/Users/jano/PEVS/Bakalarka/Dynamic-Benchmark/backends/NET/JsExecutor/bin/Debug/net9.0/JsExecutor.staticwebassets.endpoints.json
+/Users/jano/PEVS/Bakalarka/Dynamic-Benchmark/backends/NET/JsExecutor/bin/Debug/net9.0/JsExecutor
+/Users/jano/PEVS/Bakalarka/Dynamic-Benchmark/backends/NET/JsExecutor/bin/Debug/net9.0/JsExecutor.deps.json
+/Users/jano/PEVS/Bakalarka/Dynamic-Benchmark/backends/NET/JsExecutor/bin/Debug/net9.0/JsExecutor.runtimeconfig.json
+/Users/jano/PEVS/Bakalarka/Dynamic-Benchmark/backends/NET/JsExecutor/bin/Debug/net9.0/JsExecutor.dll
+/Users/jano/PEVS/Bakalarka/Dynamic-Benchmark/backends/NET/JsExecutor/bin/Debug/net9.0/JsExecutor.pdb
+/Users/jano/PEVS/Bakalarka/Dynamic-Benchmark/backends/NET/JsExecutor/bin/Debug/net9.0/Acornima.dll
+/Users/jano/PEVS/Bakalarka/Dynamic-Benchmark/backends/NET/JsExecutor/bin/Debug/net9.0/Jint.dll
+/Users/jano/PEVS/Bakalarka/Dynamic-Benchmark/backends/NET/JsExecutor/bin/Debug/net9.0/Microsoft.AspNetCore.OpenApi.dll
+/Users/jano/PEVS/Bakalarka/Dynamic-Benchmark/backends/NET/JsExecutor/bin/Debug/net9.0/Microsoft.OpenApi.dll
+/Users/jano/PEVS/Bakalarka/Dynamic-Benchmark/backends/NET/JsExecutor/obj/Debug/net9.0/JsExecutor.csproj.AssemblyReference.cache
+/Users/jano/PEVS/Bakalarka/Dynamic-Benchmark/backends/NET/JsExecutor/obj/Debug/net9.0/JsExecutor.GeneratedMSBuildEditorConfig.editorconfig
+/Users/jano/PEVS/Bakalarka/Dynamic-Benchmark/backends/NET/JsExecutor/obj/Debug/net9.0/JsExecutor.AssemblyInfoInputs.cache
+/Users/jano/PEVS/Bakalarka/Dynamic-Benchmark/backends/NET/JsExecutor/obj/Debug/net9.0/JsExecutor.AssemblyInfo.cs
+/Users/jano/PEVS/Bakalarka/Dynamic-Benchmark/backends/NET/JsExecutor/obj/Debug/net9.0/JsExecutor.csproj.CoreCompileInputs.cache
+/Users/jano/PEVS/Bakalarka/Dynamic-Benchmark/backends/NET/JsExecutor/obj/Debug/net9.0/JsExecutor.MvcApplicationPartsAssemblyInfo.cs
+/Users/jano/PEVS/Bakalarka/Dynamic-Benchmark/backends/NET/JsExecutor/obj/Debug/net9.0/JsExecutor.MvcApplicationPartsAssemblyInfo.cache
+/Users/jano/PEVS/Bakalarka/Dynamic-Benchmark/backends/NET/JsExecutor/obj/Debug/net9.0/JsExecutor.sourcelink.json
+/Users/jano/PEVS/Bakalarka/Dynamic-Benchmark/backends/NET/JsExecutor/obj/Debug/net9.0/scopedcss/bundle/JsExecutor.styles.css
+/Users/jano/PEVS/Bakalarka/Dynamic-Benchmark/backends/NET/JsExecutor/obj/Debug/net9.0/staticwebassets.build.json
+/Users/jano/PEVS/Bakalarka/Dynamic-Benchmark/backends/NET/JsExecutor/obj/Debug/net9.0/staticwebassets.development.json
+/Users/jano/PEVS/Bakalarka/Dynamic-Benchmark/backends/NET/JsExecutor/obj/Debug/net9.0/staticwebassets.build.endpoints.json
+/Users/jano/PEVS/Bakalarka/Dynamic-Benchmark/backends/NET/JsExecutor/obj/Debug/net9.0/staticwebassets/msbuild.JsExecutor.Microsoft.AspNetCore.StaticWebAssets.props
+/Users/jano/PEVS/Bakalarka/Dynamic-Benchmark/backends/NET/JsExecutor/obj/Debug/net9.0/staticwebassets/msbuild.JsExecutor.Microsoft.AspNetCore.StaticWebAssetEndpoints.props
+/Users/jano/PEVS/Bakalarka/Dynamic-Benchmark/backends/NET/JsExecutor/obj/Debug/net9.0/staticwebassets/msbuild.build.JsExecutor.props
+/Users/jano/PEVS/Bakalarka/Dynamic-Benchmark/backends/NET/JsExecutor/obj/Debug/net9.0/staticwebassets/msbuild.buildMultiTargeting.JsExecutor.props
+/Users/jano/PEVS/Bakalarka/Dynamic-Benchmark/backends/NET/JsExecutor/obj/Debug/net9.0/staticwebassets/msbuild.buildTransitive.JsExecutor.props
+/Users/jano/PEVS/Bakalarka/Dynamic-Benchmark/backends/NET/JsExecutor/obj/Debug/net9.0/staticwebassets.pack.json
+/Users/jano/PEVS/Bakalarka/Dynamic-Benchmark/backends/NET/JsExecutor/obj/Debug/net9.0/JsExecutor.csproj.Up2Date
+/Users/jano/PEVS/Bakalarka/Dynamic-Benchmark/backends/NET/JsExecutor/obj/Debug/net9.0/JsExecutor.dll
+/Users/jano/PEVS/Bakalarka/Dynamic-Benchmark/backends/NET/JsExecutor/obj/Debug/net9.0/refint/JsExecutor.dll
+/Users/jano/PEVS/Bakalarka/Dynamic-Benchmark/backends/NET/JsExecutor/obj/Debug/net9.0/JsExecutor.pdb
+/Users/jano/PEVS/Bakalarka/Dynamic-Benchmark/backends/NET/JsExecutor/obj/Debug/net9.0/JsExecutor.genruntimeconfig.cache
+/Users/jano/PEVS/Bakalarka/Dynamic-Benchmark/backends/NET/JsExecutor/obj/Debug/net9.0/ref/JsExecutor.dll

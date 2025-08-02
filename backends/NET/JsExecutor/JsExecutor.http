@@ -1,0 +1,6 @@
+@JsExecutor_HostAddress = http://localhost:5181
+
+GET {{JsExecutor_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
