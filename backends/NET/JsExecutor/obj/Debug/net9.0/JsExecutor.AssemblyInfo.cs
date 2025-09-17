@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("JsExecutor")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+988575a6b6305e400648921ed6b6ab2c5dfd3740")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+6c64e3f217d246e4be705ed81403258174df4746")]
 [assembly: System.Reflection.AssemblyProductAttribute("JsExecutor")]
 [assembly: System.Reflection.AssemblyTitleAttribute("JsExecutor")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
