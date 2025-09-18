@@ -1,46 +1,49 @@
 using System.Diagnostics;
-using Acornima.Ast;
 using Jint;
 using Microsoft.AspNetCore.Mvc;
 
 namespace JsExecutor.Controllers
 {
     [ApiController]
-    [Route("api/js")]
+    [Route("api/run")]
     public class JsController : ControllerBase
     {
         public class ScriptRequest
         {
-            public string Script { get; set; }
+            public string Script { get; set; } = string.Empty;
+            public string Language { get; set; } = "js";
         }
-        
+
         [HttpPost]
-        public IActionResult RunScript([FromBody] ScriptRequest request)
+        public IActionResult Run([FromBody] ScriptRequest request)
         {
-            if (string.IsNullOrWhiteSpace(request.Script))
+            if (request.Language != "js")
             {
-                return BadRequest(new { error = "Script is required" });
+                return BadRequest(new
+                {
+                    result = $"Nepodporovaný jazyk: {request.Language}",
+                    durationMs = -1
+                });
             }
 
             try
             {
+                var sw = Stopwatch.StartNew();
                 var engine = new Engine();
-
-                var stopwatch = Stopwatch.StartNew();
                 var result = engine.Evaluate(request.Script);
-                stopwatch.Stop();
+                sw.Stop();
 
                 return Ok(new
                 {
-                    result = result.ToObject()?.ToString(),
-                    durationMs = stopwatch.ElapsedMilliseconds
+                    result = result.ToString(),
+                    durationMs = sw.ElapsedMilliseconds
                 });
             }
             catch (Exception ex)
             {
-                return BadRequest(new
+                return Ok(new
                 {
-                    error = ex.Message,
+                    result = "Chyba: " + ex.Message,
                     durationMs = -1
                 });
             }

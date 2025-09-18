@@ -9,19 +9,17 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/java")
-@CrossOrigin // umožní CORS pre frontend
-public class JsController {
+@CrossOrigin
+public class PolyglotController {
 
-    public static class ScriptRequest {
-        public String script;  // musí byť public a mať getter/setter alebo byť public pre Jackson
-    }
+    @PostMapping("/run")
+    public Map<String, Object> runScript(@RequestBody Map<String, String> body) {
+        String script = body.get("script");
+        String language = body.get("language"); // "js", "groovy", "python"
 
-    @PostMapping("/run-js")
-    public Map<String, Object> runScript(@RequestBody ScriptRequest request) {
-        String script = request.script;
-        try (Context context = Context.newBuilder("js").allowAllAccess(false).build()) {
+        try (Context context = Context.newBuilder(language).allowAllAccess(true).build()) {
             Instant start = Instant.now();
-            Value result = context.eval("js", script);
+            Value result = context.eval(language, script);
             Instant end = Instant.now();
 
             return Map.of(
