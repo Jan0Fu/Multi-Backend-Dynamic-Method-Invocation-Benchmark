@@ -1,46 +1,48 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="sk">
 <head>
   <meta charset="UTF-8">
-  <title>Dynamic Methods Benchmark</title>
+  <title>Dynamické volanie metód - Benchmark</title>
   <style>
-    body {
-      font-family: sans-serif;
-      margin: 2rem;
-    }
-    textarea {
-      width: 100%;
-      height: 150px;
-    }
-    table {
-      margin-top: 1rem;
-      width: 100%;
-      border-collapse: collapse;
-    }
-    th, td {
-      padding: 8px 12px;
-      border: 1px solid #ccc;
-    }
-    th {
-      background-color: #eee;
-    }
+    body { font-family: sans-serif; margin: 2rem; background: #fafafa; }
+    textarea, select, input { width: 100%; margin: 0.5rem 0; padding: 0.5rem; font-size: 1rem; }
+    button { padding: 0.6rem 1.2rem; background: #007bff; color: white; border: none; border-radius: 6px; cursor: pointer; }
+    button:hover { background: #0056b3; }
+    table { border-collapse: collapse; width: 100%; margin-top: 1rem; }
+    th, td { border: 1px solid #ccc; padding: 0.5rem; text-align: left; }
+    th { background: #eee; }
   </style>
 </head>
 <body>
-  <h1>Script Benchmark Across Backends</h1>
+  <h1>Dynamické volanie metód - Benchmark</h1>
 
-  <label for="script">Zadaj JS skript:</label>
-  <textarea id="script">// Príklad: function add(a, b) { return a + b; } add(2, 3);</textarea>
-  <br><br>
-  <button onclick="runBenchmark()">Spustiť benchmark</button>
+  <label for="language">Vyber jazyk skriptu:</label>
+  <select id="language">
+    <option value="js">JavaScript</option>
+    <option value="python">Python</option>
+    <option value="groovy">Groovy</option>
+  </select>
+
+  <label for="script">Skript:</label>
+  <textarea id="script" rows="8">function fib(n) {
+  if (n <= 1) return n;
+  return fib(n-1) + fib(n-2);
+}
+fib(20);</textarea>
+
+  <label for="variables">Premenné (JSON):</label>
+  <textarea id="variables" rows="3">{"x": 10, "y": 5}</textarea>
+
+  <button onclick="runBenchmark()">Spusti benchmark</button>
 
   <table id="results">
     <thead>
       <tr>
         <th>Backend</th>
         <th>Výsledok</th>
+        <th>Premenné</th>
         <th>Čas (ms)</th>
-        <th>Stav</th>
+        <th>Status</th>
       </tr>
     </thead>
     <tbody></tbody>
@@ -48,13 +50,25 @@
 
   <script>
     const endpoints = [
-      { name: "Java (GraalVM)", url: "http://localhost:8080/java/run-js" },
-      { name: ".NET (Jint)", url: "http://localhost:5181/api/js" },
-      { name: "Node.js (V8)", url: "http://localhost:3000/node/run-js" }
+      { name: "Java (GraalVM)", url: "http://localhost:8080/java/run" },
+      { name: ".NET (Jint)", url: "http://localhost:5181/api/run" },
+      { name: "Node.js (V8)", url: "http://localhost:3001/run" },
+      { name: "Python backend", url: "http://localhost:8000/python/run" }
     ];
 
     async function runBenchmark() {
+      const language = document.getElementById('language').value;
       const script = document.getElementById('script').value;
+      const variablesInput = document.getElementById('variables').value;
+
+      let variables = {};
+      try {
+        variables = JSON.parse(variablesInput);
+      } catch (e) {
+        alert("Neplatný JSON formát v premenných!");
+        return;
+      }
+
       const tbody = document.querySelector('#results tbody');
       tbody.innerHTML = '';
 
@@ -62,6 +76,7 @@
         const row = document.createElement('tr');
         row.innerHTML = `
           <td>${backend.name}</td>
+          <td>...</td>
           <td>...</td>
           <td>...</td>
           <td>Čaká sa</td>
@@ -72,17 +87,19 @@
           const response = await fetch(backend.url, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ script })
+            body: JSON.stringify({ language, script, variables })
           });
 
           const data = await response.json();
           row.cells[1].innerText = data.result ?? '(žiadny)';
-          row.cells[2].innerText = data.durationMs ?? '?';
-          row.cells[3].innerText = response.ok ? 'OK' : 'Chyba';
+          row.cells[2].innerText = data.variables ? JSON.stringify(data.variables) : '-';
+          row.cells[3].innerText = data.durationMs ?? '?';
+          row.cells[4].innerText = response.ok ? 'OK' : 'Chyba';
         } catch (err) {
           row.cells[1].innerText = '-';
           row.cells[2].innerText = '-';
-          row.cells[3].innerText = 'Zlyhalo';
+          row.cells[3].innerText = '-';
+          row.cells[4].innerText = 'Zlyhalo';
         }
       }
     }
