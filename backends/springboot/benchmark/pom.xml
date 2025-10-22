@@ -43,8 +43,8 @@
 		</dependency>
 
 		<dependency>
-			<groupId>org.graalvm.js</groupId>
-			<artifactId>js</artifactId>
+			<groupId>org.graalvm.polyglot</groupId>
+			<artifactId>polyglot</artifactId>
 			<version>24.0.0</version>
 		</dependency>
 

@@ -1,41 +1,50 @@
-using System.Diagnostics;
-using Jint;
 using Microsoft.AspNetCore.Mvc;
+using Jint;
+using System.Diagnostics;
+using System.Text.Json;
 
-namespace JsExecutor.Controllers
+namespace DynamicBenchmark.Controllers
 {
     [ApiController]
-    [Route("api/run")]
+    [Route("api/js")]
     public class JsController : ControllerBase
     {
-        public class ScriptRequest
-        {
-            public string Script { get; set; } = string.Empty;
-            public string Language { get; set; } = "js";
-        }
+        public record ScriptRequest(string Script, JsonElement Variables);
 
         [HttpPost]
-        public IActionResult Run([FromBody] ScriptRequest request)
+        public IActionResult RunScript([FromBody] ScriptRequest request)
         {
-            if (request.Language != "js")
-            {
-                return BadRequest(new
-                {
-                    result = $"Nepodporovaný jazyk: {request.Language}",
-                    durationMs = -1
-                });
-            }
-
             try
             {
-                var sw = Stopwatch.StartNew();
                 var engine = new Engine();
+
+                // Deserialize na Dictionary<string, object> a pretypovať na čísla
+                var varsDict = new Dictionary<string, object>();
+                foreach (var prop in request.Variables.EnumerateObject())
+                {
+                    if (prop.Value.ValueKind == JsonValueKind.Number)
+                        varsDict[prop.Name] = prop.Value.GetDouble(); // alebo GetInt32() ak sú celé čísla
+                    else if (prop.Value.ValueKind == JsonValueKind.String)
+                    {
+                        if (double.TryParse(prop.Value.GetString(), out var num))
+                            varsDict[prop.Name] = num;
+                        else
+                            varsDict[prop.Name] = prop.Value.GetString();
+                    }
+                    else
+                        varsDict[prop.Name] = prop.Value.GetString();
+                }
+
+                engine.SetValue("vars", varsDict);
+
+                var sw = Stopwatch.StartNew();
                 var result = engine.Evaluate(request.Script);
                 sw.Stop();
 
                 return Ok(new
                 {
-                    result = result.ToString(),
+                    result = result.ToObject(),
+                    variables = varsDict,
                     durationMs = sw.ElapsedMilliseconds
                 });
             }
@@ -43,7 +52,8 @@ namespace JsExecutor.Controllers
             {
                 return Ok(new
                 {
-                    result = "Chyba: " + ex.Message,
+                    result = $"Chyba: {ex.Message}",
+                    variables = request.Variables,
                     durationMs = -1
                 });
             }

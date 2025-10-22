@@ -5,7 +5,7 @@ import execjs
 
 app = FastAPI()
 
-# Povolenie CORS, aby frontend mohol volať API
+# Povolenie CORS pre frontend
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],  # pre testovanie môže byť "*"
@@ -18,47 +18,28 @@ app.add_middleware(
 async def run_js(request: Request):
     data = await request.json()
     script = data.get("script", "")
+    variables = data.get("variables", {})  # očakávame dict s premennými
 
     try:
         start = time.time()
-        ctx = execjs.get().compile(script)
 
-        # Posledný riadok by mal byť volanie funkcie
-        lines = [line.strip() for line in script.strip().splitlines() if line.strip()]
-        last_line = lines[-1]
+        # Posielame premenné do JS kódu
+        vars_code = f"const vars = {variables};\n"
 
-        # Predpokladáme, že posledný riadok je volanie: fib(10)
-        func_name = last_line.split("(")[0]
-        args = last_line[last_line.find("(")+1:last_line.find(")")]
-        args = [int(a.strip()) for a in args.split(",") if a.strip()]
+        # Rozdelíme skript po riadkoch
+        lines = script.strip().splitlines()
+        if len(lines) == 0:
+            return {"result": "(žiadny)", "variables": variables, "durationMs": 0}
 
-        result = ctx.call(func_name, *args)
+        # Posledný riadok je výraz na vyhodnotenie
+        expression = lines[-1].rstrip(";")
+        body = "\n".join(lines[:-1])
+
+        ctx = execjs.get().compile(vars_code + body)
+        result = ctx.eval(expression)
+
         duration = int((time.time() - start) * 1000)
-
-        return {"result": str(result), "durationMs": duration}
+        return {"result": str(result), "variables": variables, "durationMs": duration}
 
     except Exception as e:
-        return {"result": f"Chyba: {str(e)}", "durationMs": -1}
-    
-@app.post("/python/run-py")
-async def run_python(request: Request):
-    data = await request.json()
-    script = data.get("script", "")
-    local_vars = {}
-
-    try:
-        local_vars = {}
-        start = time.time()
-        exec(script, local_vars) 
-
-        # posledný výraz
-        lines = [line.strip() for line in script.strip().splitlines() if line.strip()]
-        result = None
-        for line in reversed(lines):
-            if not line.startswith("def "):
-                result = eval(line, local_vars)
-                break
-        duration = int((time.time() - start) * 1000)
-        return {"result": str(result), "durationMs": duration}
-    except Exception as e:
-        return {"result": f"Chyba: {str(e)}", "durationMs": -1}
+        return {"result": f"Chyba: {str(e)}", "variables": variables, "durationMs": -1}
