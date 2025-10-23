@@ -22,10 +22,15 @@
   </select>
 
   <label for="script">Skript:</label>
-  <textarea id="script">// Príklad JS: function add(a,b){return a+b;}\nadd(vars.x, vars.y)</textarea>
+  <textarea id="script">// function fib(n) {
+    if (n <= 1) return n;
+    return fib(n-1) + fib(n-2);
+    }
+    fib(vars.n);
+  </textarea>
 
   <label for="variables">Premenné (JSON):</label>
-  <textarea id="variables">{ "x": 10, "y": 5 }</textarea>
+  <textarea id="variables">{ "n": 20 }</textarea>
 
   <button onclick="runBenchmark()">Spustiť benchmark</button>
 
@@ -47,6 +52,7 @@
       js: [
         { name: "Java (GraalVM)", url: "http://localhost:8080/java/run-js" },
         { name: ".NET (Jint)", url: "http://localhost:5181/api/js" },
+        { name: "Node.js (V8)", url: "http://localhost:3004/run" },
         { name: "Python backend (JS)", url: "http://localhost:8000/python/run-js" }
       ],
       python: [
@@ -54,7 +60,7 @@
         { name: "Python backend", url: "http://localhost:8000/python/run-python" }
       ],
       groovy: [
-        { name: "Java (GraalVM)", url: "http://localhost:8080/java/run-groovy" }
+        { name: "Java (GroovyShell)", url: "http://localhost:8080/java/run-groovy" }
       ]
     };
 
