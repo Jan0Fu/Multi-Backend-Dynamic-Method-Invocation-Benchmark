@@ -1,47 +1,91 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="sk">
 <head>
   <meta charset="UTF-8">
   <title>Dynamic Methods Benchmark</title>
   <style>
-    body { font-family: sans-serif; margin: 2rem; }
-    textarea, input { width: 100%; margin-bottom: 1rem; }
-    table { margin-top: 1rem; width: 100%; border-collapse: collapse; }
-    th, td { padding: 8px 12px; border: 1px solid #ccc; }
-    th { background-color: #eee; }
+    body {
+      font-family: sans-serif;
+      margin: 2rem;
+      background: #fafafa;
+    }
+    textarea {
+      width: 100%;
+      height: 120px;
+      margin-bottom: 1rem;
+      font-family: monospace;
+      font-size: 14px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 1rem;
+    }
+    th, td {
+      border: 1px solid #ccc;
+      padding: 6px 8px;
+      text-align: left;
+    }
+    th {
+      background: #eee;
+    }
+    select, button {
+      padding: 6px 12px;
+      margin-top: 0.5rem;
+      font-size: 14px;
+    }
+    .script-block {
+      border: 1px solid #ccc;
+      padding: 10px;
+      margin-bottom: 15px;
+      background: #fff;
+      border-radius: 6px;
+    }
   </style>
 </head>
 <body>
-  <h1>Script Benchmark Across Backends</h1>
 
-  <label for="language">Vyber jazyk:</label>
-  <select id="language">
+  <h1>Benchmark dynamického volania metód</h1>
+
+  <label for="language">Vyber jazyk skriptu:</label>
+  <select id="language" onchange="updatePlaceholders()">
     <option value="js">JavaScript</option>
     <option value="python">Python</option>
     <option value="groovy">Groovy</option>
   </select>
 
-  <label for="script">Skript:</label>
-  <textarea id="script">// function fib(n) {
-    if (n <= 1) return n;
-    return fib(n-1) + fib(n-2);
-    }
-    fib(vars.n);
-  </textarea>
+  <br><br>
+  <label for="variables">Vstupné premenné (JSON):</label>
+  <textarea id="variables">{"x":10,"y":5}</textarea>
 
-  <label for="variables">Premenné (JSON):</label>
-  <textarea id="variables">{ "n": 20 }</textarea>
+  <div class="script-block">
+    <h3>Skript 1</h3>
+    <textarea id="script1">// JS príklad:
+// vars.sum = vars.x + vars.y;
+vars;</textarea>
+  </div>
 
-  <button onclick="runBenchmark()">Spustiť benchmark</button>
+  <div class="script-block">
+    <h3>Skript 2</h3>
+    <textarea id="script2"></textarea>
+  </div>
+
+  <div class="script-block">
+    <h3>Skript 3</h3>
+    <textarea id="script3"></textarea>
+  </div>
+
+  <button onclick="runAll()">Spustiť všetky skripty</button>
+  <button onclick="loadScenarios()">Načítať ukážky</button>
 
   <table id="results">
     <thead>
       <tr>
+        <th>#</th>
         <th>Backend</th>
         <th>Výsledok</th>
-        <th>Premenné</th>
+        <th>Premenné po vykonaní</th>
         <th>Čas (ms)</th>
-        <th>Stav</th>
       </tr>
     </thead>
     <tbody></tbody>
@@ -57,58 +101,120 @@
       ],
       python: [
         { name: "Java (GraalVM)", url: "http://localhost:8080/java/run-python" },
+        { name: ".NET (IronPython)", url: "http://localhost:5181/api/python" },
         { name: "Python backend", url: "http://localhost:8000/python/run-python" }
       ],
       groovy: [
-        { name: "Java (GroovyShell)", url: "http://localhost:8080/java/run-groovy" }
+        { name: "Java (GraalVM)", url: "http://localhost:8080/java/run-groovy" }
       ]
     };
 
-    async function runBenchmark() {
-      const language = document.getElementById('language').value;
-      const script = document.getElementById('script').value;
-      const varsText = document.getElementById('variables').value;
-      let variables = {};
-      try {
-        variables = JSON.parse(varsText);
-      } catch {
-        alert("Premenné musia byť validný JSON!");
-        return;
-      }
+    function updatePlaceholders() {
+      const lang = document.getElementById('language').value;
 
+      if (lang === "python") {
+        document.getElementById('variables').value = '{ "n": 20 }';
+        document.getElementById('script1').value = `def fib(n):
+    if n <= 1:
+        return n
+    return fib(n - 1) + fib(n - 2)
+
+vars["result"] = fib(vars["n"])`;
+        document.getElementById('script2').value = "";
+        document.getElementById('script3').value = "";
+      }
+      else if (lang === "js") {
+        document.getElementById('variables').value = '{"a":5,"b":10}';
+        document.getElementById('script1').value = "vars.result = vars.a + vars.b;";
+        document.getElementById('script2').value = "// vars.c = vars.result * 2;";
+        document.getElementById('script3').value = "";
+      }
+      else if (lang === "groovy") {
+        document.getElementById('variables').value = '{"x":10,"y":5}';
+        document.getElementById('script1').value = "def z = x + y";
+        document.getElementById('script2').value = "def doubled = z * 2";
+        document.getElementById('script3').value = "";
+      }
+    }
+
+    async function runAll() {
+      const lang = document.getElementById('language').value;
+      const scripts = [
+        document.getElementById('script1').value.trim(),
+        document.getElementById('script2').value.trim(),
+        document.getElementById('script3').value.trim()
+      ].filter(s => s.length > 0);
+      let variables = JSON.parse(document.getElementById('variables').value);
       const tbody = document.querySelector('#results tbody');
       tbody.innerHTML = '';
 
-      for (const backend of endpoints[language]) {
-        const row = document.createElement('tr');
-        row.innerHTML = `
-          <td>${backend.name}</td>
-          <td>...</td>
-          <td>...</td>
-          <td>...</td>
-          <td>Čaká sa</td>
-        `;
-        tbody.appendChild(row);
+      for (let i = 0; i < scripts.length; i++) {
+        const script = scripts[i];
+        for (const backend of endpoints[lang]) {
+          const row = document.createElement('tr');
+          row.innerHTML = `
+            <td>${i + 1}</td>
+            <td>${backend.name}</td>
+            <td>...</td>
+            <td>${JSON.stringify(variables)}</td>
+            <td>...</td>
+          `;
+          tbody.appendChild(row);
 
-        try {
-          const response = await fetch(backend.url, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ script, variables })
-          });
+          try {
+            const response = await fetch(backend.url, {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ script, variables })
+            });
 
-          const data = await response.json();
-          row.cells[1].innerText = data.result ?? '(žiadny)';
-          row.cells[2].innerText = JSON.stringify(data.variables ?? variables);
-          row.cells[3].innerText = data.durationMs ?? '?';
-          row.cells[4].innerText = response.ok ? 'OK' : 'Chyba';
-        } catch (err) {
-          row.cells[1].innerText = '-';
-          row.cells[2].innerText = '-';
-          row.cells[3].innerText = '-';
-          row.cells[4].innerText = 'Zlyhalo';
+            const data = await response.json();
+            row.cells[2].innerText = JSON.stringify(data.result);
+            row.cells[3].innerText = formatVars(data.variables);
+            row.cells[4].innerText = data.durationMs ?? '?';
+            // premenné sa prenášajú ďalej
+            variables = data.variables || variables;
+          } catch (err) {
+            row.cells[2].innerText = "Chyba: " + err.message;
+            row.cells[4].innerText = "-1";
+          }
         }
       }
+    }
+    async function loadScenarios() {
+      try {
+        const res = await fetch('./scenarios.json');
+        const data = await res.json();
+
+        const scenarios = data.scenarios;
+        const list = scenarios.map((s, i) => `${i + 1}. ${s.name}`).join('\n');
+
+        const choice = prompt(
+          "Vyber číslo scenára:\n" + list
+        );
+
+        if (!choice) return;
+        const index = parseInt(choice) - 1;
+        const selected = scenarios[index];
+        if (!selected) return;
+
+        document.getElementById('language').value = selected.language;
+        document.getElementById('variables').value = JSON.stringify(selected.variables, null, 2);
+        document.getElementById('script1').value = selected.scripts[0] || '';
+        document.getElementById('script2').value = selected.scripts[1] || '';
+        document.getElementById('script3').value = selected.scripts[2] || '';
+
+        alert(`Scenár "${selected.name}" bol načítaný.`);
+      } catch (err) {
+        alert('Chyba pri načítaní scenárov: ' + err.message);
+      }
+    }
+
+    function formatVars(obj) {
+      if (!obj) return "-";
+      return Object.entries(obj)
+        .map(([k, v]) => `${k}: ${v}`)
+        .join(", ");
     }
   </script>
 </body>

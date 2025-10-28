@@ -1,11 +1,9 @@
 package com.example.benchmark;
 
-import org.graalvm.polyglot.Context;
-import org.graalvm.polyglot.Value;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.graalvm.polyglot.*;
 import org.springframework.web.bind.annotation.*;
-import groovy.lang.Binding;
-import groovy.lang.GroovyShell;
-
 import java.util.HashMap;
 import java.util.Map;
 
@@ -13,6 +11,8 @@ import java.util.Map;
 @RequestMapping("/java")
 @CrossOrigin(origins = "*")
 public class ScriptController {
+
+    private final ObjectMapper mapper = new ObjectMapper();
 
     @PostMapping("/run-js")
     public Map<String, Object> runJs(@RequestBody Map<String, Object> request) {
@@ -24,78 +24,77 @@ public class ScriptController {
         return runScript(request, "python");
     }
 
-    @PostMapping("/run-groovy")
-    public Map<String, Object> runGroovy(@RequestBody Map<String, Object> request) {
-        return runScript(request, "groovy");
-    }
-
-    private Map<String, Object> runScript(Map<String, Object> request, String language) {
-        Map<String, Object> result = new HashMap<>();
+    private Map<String, Object> runScript(Map<String, Object> request, String lang) {
+        Map<String, Object> response = new HashMap<>();
         long start = System.currentTimeMillis();
 
-        try {
-            String script = (String) request.get("script");
-            Map<String, Object> variables = request.get("variables") != null
-                    ? (Map<String, Object>) request.get("variables")
-                    : new HashMap<>();
+        String script = (String) request.get("script");
+        Map<String, Object> inputVars = safeMap(request.get("variables"));
+        Map<String, Object> vars = new HashMap<>(inputVars);
 
-            Object output;
+        ObjectMapper mapper = new ObjectMapper();
 
-            if ("groovy".equalsIgnoreCase(language)) {
-                // --- Groovy ---
-                Binding binding = new Binding();
-                binding.setVariable("vars", variables);
+        try (Context context = Context.newBuilder(lang).allowAllAccess(true).build()) {
 
-                GroovyShell shell = new GroovyShell(binding);
-                output = shell.evaluate(script);
+            if ("js".equals(lang)) {
+                // --- JavaScript ---
+                String json = mapper.writeValueAsString(vars);
+                Value result = context.eval("js",
+                        "var vars = JSON.parse('" + json.replace("'", "\\'") + "');\n" +
+                                script + "\n" +
+                                "JSON.stringify(vars);"
+                );
+                String varsJson = result.asString();
+                Map<String, Object> updated = mapper.readValue(varsJson, new TypeReference<Map<String, Object>>() {});
+                vars.putAll(updated);
 
-            } else {
-                // --- JS / Python cez GraalVM ---
-                try (Context context = Context.newBuilder(language).allowAllAccess(true).build()) {
-                    StringBuilder init = new StringBuilder();
-                    if (variables != null && !variables.isEmpty()) {
-                        if ("js".equalsIgnoreCase(language)) {
-                            init.append("var vars = {");
-                            for (Map.Entry<String, Object> entry : variables.entrySet()) {
-                                Object value = entry.getValue();
-                                if (value instanceof String) {
-                                    init.append(entry.getKey()).append(": '").append(value).append("',");
-                                } else {
-                                    init.append(entry.getKey()).append(": ").append(value).append(",");
-                                }
-                            }
-                            init.append("};\n");
-                        } else if ("python".equalsIgnoreCase(language)) {
-                            context.getBindings("python").putMember("vars", variables);
-                            for (Map.Entry<String, Object> entry : variables.entrySet()) {
-                                Object value = entry.getValue();
-                                if (value instanceof String) {
-                                    init.append(entry.getKey()).append(" = '").append(value).append("'\n");
-                                } else {
-                                    init.append(entry.getKey()).append(" = ").append(value).append("\n");
-                                }
-                            }
-                        }
+            } else if ("python".equals(lang)) {
+                // --- Python ---
+                StringBuilder init = new StringBuilder("vars = {}\n");
+                for (Map.Entry<String, Object> e : vars.entrySet()) {
+                    Object val = e.getValue();
+                    if (val instanceof Number) {
+                        init.append(String.format("vars['%s'] = %s\n", e.getKey(), val));
+                    } else {
+                        init.append(String.format("vars['%s'] = '%s'\n", e.getKey(), val));
                     }
-
-                    Value outputValue = context.eval(language, init.toString() + script);
-                    output = outputValue.isNull() ? "(žiadny)" : outputValue.toString(); // <-- bezpečne vo vnútri kontextu
                 }
+
+                String fullScript = init + "\n" + script + "\n" + "import json\nvars_json = json.dumps(vars)\n";
+                context.eval("python", fullScript);
+
+                Value bindings = context.getBindings("python");
+                Value varsValue = bindings.getMember("vars_json");
+
+                String varsJson = (varsValue != null && !varsValue.isNull())
+                        ? varsValue.asString()
+                        : mapper.writeValueAsString(vars); // fallback
+
+                Map<String, Object> updated = mapper.readValue(varsJson, new TypeReference<Map<String, Object>>() {});
+                vars.putAll(updated);
             }
 
             long duration = System.currentTimeMillis() - start;
-            result.put("result", output == null ? "(žiadny)" : output.toString());
-            result.put("variables", variables);
-            result.put("durationMs", duration);
-            result.put("status", "OK");
+            response.put("result", vars);
+            response.put("variables", vars);
+            response.put("durationMs", duration);
+            response.put("status", "OK");
 
         } catch (Exception e) {
-            result.put("result", "Chyba: " + e.getMessage());
-            result.put("variables", request.get("variables"));
-            result.put("durationMs", -1);
-            result.put("status", "Chyba");
+            response.put("result", "Chyba: " + e.getMessage());
+            response.put("variables", vars);
+            response.put("durationMs", -1);
+            response.put("status", "Chyba");
         }
 
-        return result;
+        return response;
+    }
+
+    @SuppressWarnings("unchecked")
+    private Map<String, Object> safeMap(Object o) {
+        if (o instanceof Map) {
+            return (Map<String, Object>) o;
+        }
+        return new HashMap<>();
     }
 }

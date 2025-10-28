@@ -1,43 +1,40 @@
-import express from 'express';
+import express from "express";
 import cors from "cors";
-import { VM } from 'vm2';
-import { performance } from 'perf_hooks';
+import { VM } from "vm2";
 
 const app = express();
 app.use(cors());
 app.use(express.json());
 
-app.post('/run', (req, res) => {
+app.post("/run", (req, res) => {
   const { script, variables } = req.body;
-
-  if (!script) {
-    return res.status(400).json({ error: 'Missing script' });
-  }
+  if (!script) return res.status(400).json({ result: "Missing script" });
 
   try {
     const vm = new VM({
       timeout: 2000,
-      sandbox: { vars: variables }
+      sandbox: { vars: { ...variables } }
     });
 
-    const start = performance.now();
-    const result = vm.run(script);
-    const end = performance.now();
+    const start = Date.now();
+    vm.run(script);
+    const result = vm.run("JSON.stringify(vars)");
+    const end = Date.now();
+
+    const updatedVars = JSON.parse(result);
 
     res.json({
       result,
-      durationMs: Math.round(end - start), // celé ms pre jednotný formát
-      success: true
+      variables: updatedVars,
+      durationMs: end - start
     });
-
   } catch (error) {
     res.json({
-      error: error.toString(),
-      result: null,
-      durationMs: -1,
-      success: false
+      result: "Chyba: " + error.toString(),
+      variables: variables,
+      durationMs: -1
     });
   }
 });
 
-app.listen(3004, () => console.log('🟢 Node backend running on port 3004'));
+app.listen(3004, () => console.log("🟢 Node backend running on port 3004"));

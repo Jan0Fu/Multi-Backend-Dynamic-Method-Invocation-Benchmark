@@ -2,11 +2,10 @@ from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 import time
 import execjs
-import traceback
+import json
 
 app = FastAPI()
 
-# Povolenie CORS
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -15,7 +14,6 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# --- Endpoint pre JS skripty ---
 @app.post("/python/run-js")
 async def run_js(request: Request):
     data = await request.json()
@@ -24,69 +22,56 @@ async def run_js(request: Request):
 
     try:
         start = time.time()
-        vars_code = f"const vars = {variables};\n"
-        lines = script.strip().splitlines()
-        expression = lines[-1].rstrip(";") if lines else ""
-        body = "\n".join(lines[:-1])
-        ctx = execjs.get().compile(vars_code + body)
-        result = ctx.eval(expression)
+        ctx = execjs.get().compile(f"var vars = {json.dumps(variables)};\n{script}\nJSON.stringify(vars);")
+        result_json = ctx.eval("JSON.stringify(vars)")
+        updated_vars = json.loads(result_json)
+
+        duration = int((time.time() - start) * 1000)
+        return {
+            "result": result_json,
+            "variables": updated_vars,
+            "durationMs": duration
+        }
+
+    except Exception as e:
+        return {
+            "result": f"Chyba: {str(e)}",
+            "variables": variables,
+            "durationMs": -1
+        }
+    
+@app.post("/python/run-python")
+async def run_python(request: Request):
+    """
+    Spúšťa Python kód natívne pomocou exec().
+    Premenné z requestu sú prístupné ako 'vars'.
+    """
+    data = await request.json()
+    script = data.get("script", "")
+    variables = data.get("variables", {}) or {}
+
+    try:
+        start = time.time()
+        # 🔧 dôležité: použijeme JEDEN spoločný scope
+        scope = {"vars": variables}
+
+        exec(script, scope)  # nie (script, {}, local_vars)
+        # teraz fib() a všetky funkcie ostanú dostupné v scope
+
+        result = scope.get("result") or scope["vars"].get("result", "(žiadny)")
         duration = int((time.time() - start) * 1000)
 
         return {
             "result": str(result),
-            "variables": variables,
-            "durationMs": round(duration, 3),
+            "variables": scope.get("vars", variables),
+            "durationMs": duration,
             "status": "OK"
         }
 
     except Exception as e:
         return {
-            "result": f"Chyba: {str(e)}\n{traceback.format_exc()}",
+            "result": f"Chyba: {e}",
             "variables": variables,
             "durationMs": -1,
-            "status": "Chyba"
-        }
-
-# --- Endpoint pre JS skripty ---
-@app.post("/python/run-python")
-async def run_python(request: Request):
-    data = await request.json()
-    script = data.get("script", "")
-    variables = data.get("variables", {})
-
-    # Vytvoríme jedno prostredie pre exec a eval
-    env = variables.copy()  # začneme s premennými od frontendu
-
-    try:
-        start = time.time()
-
-        lines = script.strip().splitlines()
-        if len(lines) == 0:
-            return {"result": "(žiadny)", "variables": variables, "durationMs": 0}
-
-        body = "\n".join(lines[:-1])  # všetko okrem posledného riadku
-        last_expr = lines[-1]          # posledný riadok
-
-        # Spustíme definície a kód v jednom prostredí
-        exec(body, env, env)
-
-        # Vyhodnotíme posledný výraz v tom istom prostredí
-        result = eval(last_expr, env, env)
-
-        duration = int((time.time() - start) * 1000)
-
-        return {
-            "result": result,
-            "variables": variables,
-            "durationMs": duration,
-            "status": "OK"
-        }
-
-    except Exception as e:
-        duration = round((time.time() - start) * 1000, 3)
-        return {
-            "result": f"Chyba: {str(e)}",
-            "variables": variables,
-            "durationMs": duration,
             "status": "Chyba"
         }

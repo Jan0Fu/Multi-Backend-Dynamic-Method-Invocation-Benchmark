@@ -1,0 +1,32 @@
+{
+  "scenarios": [
+    {
+      "name": "Aritmetika – prenášanie čísel medzi skriptmi",
+      "language": "js",
+      "variables": { "x": 5, "y": 10 },
+      "scripts": [
+        "vars.a = vars.x;\nvars.b = vars.y;\nvars.sum = vars.a + vars.b;\nvars;",
+        "vars.c = vars.sum * 2;\nvars;",
+        "vars.final = vars.c + 5;\nvars;"
+      ]
+    },
+    {
+      "name": "Stringová manipulácia – prenášanie reťazcov",
+      "language": "js",
+      "variables": { "str1": "Hello", "str2": "World" },
+      "scripts": [
+        "vars.combined = vars.str1 + ' ' + vars.str2;\nvars;",
+        "vars.exclaimed = vars.combined + '!';\nvars;",
+        "vars.upper = vars.exclaimed.toUpperCase();\nvars;"
+      ]
+    },
+    {
+      "name": "Fibonacci – rekurzívna funkcia",
+      "language": "js",
+      "variables": { "n": 20 },
+      "scripts": [
+        "function fib(n) {\n if (n <= 1) return n;\n return fib(n - 1) + fib(n - 2);\n}\nvars.result = fib(vars.n);\nvars;"
+      ]
+    }
+  ]
+}
